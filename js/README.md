@@ -1,4 +1,4 @@
-# `nucypher-core-wasm` in Node.js:
+# `wasm-struct-passing` in Node.js:
 
 ## Usage
 
