@@ -1,0 +1,22 @@
+{
+  "name": "wasm-struct-passing",
+  "collaborators": [
+    "Bogdan Opanchuk <bogdan@opanchuk.net>"
+  ],
+  "description": "Testing passing structs between WASM modules",
+  "version": "0.3.2",
+  "license": "GPL-3.0-only",
+  "files": [
+    "pkg-node/*.wasm",
+    "pkg-node/*.ts",
+    "pkg-node/*.js",
+    "pkg-bundler/*.wasm",
+    "pkg-bundler/*.ts",
+    "pkg-bundler/*.js",
+    "*.ts",
+    "*.js"
+  ],
+  "main": "pkg-node/wasm_struct_passing.js",
+  "browser": "pkg-bundler/wasm_struct_passing.js",
+  "types": "wasm_struct_passing.d.ts"
+}
