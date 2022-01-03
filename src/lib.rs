@@ -2,7 +2,6 @@
 
 mod utils;
 
-use alloc::boxed::Box;
 use js_sys::Uint8Array;
 use serde::{Deserialize, Serialize};
 use utils::set_panic_hook;
@@ -54,54 +53,6 @@ fn do_process_structs(structs: Vec<MyStruct>) -> u32 {
     structs.iter().map(|s| s.value).sum()
 }
 
-#[wasm_bindgen]
-pub fn process_structs_1(structs: JsValue) -> u32 {
-    set_panic_hook();
-
-    let structs: Vec<MyStruct> = serde_wasm_bindgen::from_value(structs).unwrap();
-
-    do_process_structs(structs)
-}
-
-#[wasm_bindgen]
-pub fn process_structs_2(structs: Vec<JsValue>) -> u32 {
-    set_panic_hook();
-
-    let structs: Vec<MyStruct> = structs
-        .iter()
-        .cloned()
-        .map(|s| serde_wasm_bindgen::from_value(s).unwrap())
-        .collect();
-
-    do_process_structs(structs)
-}
-
-#[wasm_bindgen]
-pub fn process_structs_3(structs: Vec<JsValue>) -> u32 {
-    set_panic_hook();
-
-    let structs: Vec<MyStruct> = structs
-        .iter()
-        .cloned()
-        .map(|s| JsValue::into_serde(&s).unwrap())
-        .collect();
-
-    do_process_structs(structs)
-}
-
-#[wasm_bindgen]
-pub fn process_structs_4(structs: Box<[JsValue]>) -> u32 {
-    set_panic_hook();
-
-    let structs: Vec<MyStruct> = structs
-        .iter()
-        .cloned()
-        .map(|s| JsValue::into_serde(&s).unwrap())
-        .collect();
-
-    do_process_structs(structs)
-}
-
 fn js_value_to_u8_vec(array_of_uint8_arrays: &[JsValue]) -> Result<Vec<Vec<u8>>, JsValue> {
     let vec_vec_u8: Vec<_> = array_of_uint8_arrays
         .iter()
@@ -120,7 +71,7 @@ fn js_value_to_u8_vec(array_of_uint8_arrays: &[JsValue]) -> Result<Vec<Vec<u8>>,
 }
 
 #[wasm_bindgen]
-pub fn process_structs_5(structs: Vec<JsValue>) -> u32 {
+pub fn process_structs(structs: Vec<JsValue>) -> u32 {
     set_panic_hook();
 
     let structs: Vec<MyStruct> = js_value_to_u8_vec(&structs)

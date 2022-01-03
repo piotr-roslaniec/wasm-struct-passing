@@ -8,6 +8,6 @@ A work-around for https://github.com/rustwasm/wasm-bindgen/issues/2452
 make
 wasm-pack test --node
 cd js
-yarn
+yarn install
 yarn test
 ```
