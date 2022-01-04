@@ -8,7 +8,7 @@ use utils::set_panic_hook;
 
 extern crate alloc;
 
-use alloc::vec::Vec;
+use alloc::{collections::BTreeMap, string::String, vec::Vec};
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -82,4 +82,21 @@ pub fn process_structs(structs: Vec<JsValue>) -> u32 {
         .collect();
 
     do_process_structs(structs)
+}
+
+pub type MyMap = BTreeMap<String, MyStruct>;
+
+fn do_process_map(map: MyMap) -> u32 {
+    map.into_iter()
+        .map(|(s, ms)| ms.value + s.len() as u32)
+        .sum()
+}
+
+#[wasm_bindgen]
+pub fn process_map(map: &JsValue) -> u32 {
+    set_panic_hook();
+
+    let map: MyMap = map.into_serde().unwrap();
+
+    do_process_map(map)
 }

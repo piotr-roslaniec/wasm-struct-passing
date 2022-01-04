@@ -5,11 +5,10 @@
 extern crate wasm_bindgen_test;
 use std::vec;
 
-use js_sys::Uint8Array;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_test::*;
 
-use wasm_struct_passing::{process_structs, MyStruct};
+use wasm_struct_passing::{process_map, process_structs, MyMap, MyStruct};
 
 #[wasm_bindgen_test]
 fn test_process_structs() {
@@ -24,4 +23,21 @@ fn test_process_structs() {
 
     let result: u32 = process_structs(structs);
     assert_eq!(result, 3);
+}
+
+#[wasm_bindgen_test]
+fn test_process_map() {
+    let map: MyMap = vec![1, 2, 3]
+        .iter()
+        .map(|i| {
+            (
+                format!("0{}", i + 1).to_string(),
+                (MyStruct::new(2)),
+            )
+        })
+        .collect();
+    let map = JsValue::from_serde(&map).unwrap();
+
+    let result: u32 = process_map(&map);
+    assert_eq!(result, 12);
 }

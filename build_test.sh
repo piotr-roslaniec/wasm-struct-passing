@@ -5,6 +5,7 @@ make && \
 wasm-pack test --node && \
 (
     cd js && \
-    yarn install && \
+    rm -rf node_modules/wasm-struct-passing && \
+    yarn install --check-files && \
     yarn test
 )
