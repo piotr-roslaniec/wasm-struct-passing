@@ -49,7 +49,12 @@ impl MyStruct {
     }
 }
 
-fn do_process_structs(structs: Vec<MyStruct>) -> u32 {
+#[wasm_bindgen]
+pub fn process_structs(structs: &JsValue) -> u32 {
+    set_panic_hook();
+
+    let structs: Vec<MyStruct> = structs.into_serde().unwrap();
+
     structs.iter().map(|s| s.value).sum()
 }
 
@@ -71,7 +76,7 @@ fn js_value_to_u8_vec(array_of_uint8_arrays: &[JsValue]) -> Result<Vec<Vec<u8>>,
 }
 
 #[wasm_bindgen]
-pub fn process_structs(structs: Vec<JsValue>) -> u32 {
+pub fn process_structs_as_bytes(structs: Vec<JsValue>) -> u32 {
     set_panic_hook();
 
     let structs: Vec<MyStruct> = js_value_to_u8_vec(&structs)
@@ -81,22 +86,31 @@ pub fn process_structs(structs: Vec<JsValue>) -> u32 {
         .map(MyStruct::from_bytes)
         .collect();
 
-    do_process_structs(structs)
+    structs.iter().map(|s| s.value).sum()
 }
 
-pub type MyMap = BTreeMap<String, MyStruct>;
-
-fn do_process_map(map: MyMap) -> u32 {
-    map.into_iter()
-        .map(|(s, ms)| ms.value + s.len() as u32)
-        .sum()
-}
+pub type SimpleMap = BTreeMap<String, u32>;
 
 #[wasm_bindgen]
 pub fn process_map(map: &JsValue) -> u32 {
     set_panic_hook();
 
-    let map: MyMap = map.into_serde().unwrap();
+    let map: SimpleMap = map.into_serde().unwrap();
 
-    do_process_map(map)
+    map.into_iter().map(|(_, ms)| ms).sum()
+}
+
+pub type MapOfStructs = BTreeMap<String, MyStruct>;
+
+#[wasm_bindgen]
+pub fn process_map_of_struct_bytes(map: &JsValue) -> u32 {
+    set_panic_hook();
+
+    let map: BTreeMap<String, Vec<u8>> = serde_wasm_bindgen::from_value(map.clone()).unwrap();
+    let map: MapOfStructs = map
+        .iter()
+        .map(|(s, ms)| (s.clone(), MyStruct::from_bytes(ms.to_vec())))
+        .collect();
+
+    map.into_iter().map(|(_, ms)| ms.value).sum()
 }
